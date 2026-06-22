@@ -316,17 +316,17 @@ def index_signal(half_drawdown, year_drawdown):
         return "N/A"
 
     if half_drawdown is not None and half_drawdown >= -0.1:
-        return "大盤加權指數創新高"
+        return "創新高"
 
     if year_drawdown is not None:
         for threshold in [-40, -35, -30, -25]:
             if year_drawdown <= threshold:
-                return f"大盤加權指數距一年高點 {threshold}%"
+                return f"距一年高點 {threshold}%"
 
     if half_drawdown is not None:
         for threshold in [-20, -15, -10, -5]:
             if half_drawdown <= threshold:
-                return f"大盤加權指數距半年高點 {threshold}%"
+                return f"距半年高點 {threshold}%"
 
     return "正常"
 
@@ -360,8 +360,13 @@ def pmi_signal(pmi):
 def price_one_year_text(name, df):
     close, _, drawdown = drawdown_from_high(df, 252)
     close_text = "N/A" if close is None else f"{close:.2f}"
-    drawdown_text = "N/A" if drawdown is None else f"{drawdown:+.1f}%"
-    return f"{name}目前股價：{close_text}（距一年高點 {drawdown_text}）"
+    if drawdown is None:
+        drawdown_text = "N/A"
+    elif drawdown >= -0.1:
+        drawdown_text = "創一年新高"
+    else:
+        drawdown_text = f"距一年高點 {drawdown:+.1f}%"
+    return f"{name}目前股價：{close_text}（{drawdown_text}）"
 
 
 def main():
