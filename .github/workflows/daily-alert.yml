@@ -1,0 +1,36 @@
+name: 台股每日策略檢查與 Discord 通知
+
+on:
+  schedule:
+    - cron: "30 0 * * *" # 每天 UTC 00:30 執行，台灣時間 08:30
+  workflow_dispatch:
+
+jobs:
+  run-taiwan-market-signal:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 取得程式碼
+        uses: actions/checkout@v4
+
+      - name: 設定 Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 安裝依賴套件
+        run: |
+          python -m pip install --upgrade pip
+          pip install yfinance pandas requests beautifulsoup4
+
+      - name: 執行台股策略程式
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DEBUG_FETCH: "0"
+
+          # 以下為選填；若網站抓不到資料，可在 GitHub Actions Variables 補上。
+          # NDC_SIGNAL_SCORE: ${{ vars.NDC_SIGNAL_SCORE }}
+          # MARGIN_MAINTENANCE_RATIO: ${{ vars.MARGIN_MAINTENANCE_RATIO }}
+          # MARGIN_BALANCE_20D_CHANGE: ${{ vars.MARGIN_BALANCE_20D_CHANGE }}
+          # TAIWAN_MANUFACTURING_PMI: ${{ vars.TAIWAN_MANUFACTURING_PMI }}
+        run: python taiwan_market_signal.py
