@@ -2,7 +2,7 @@ name: 台股每日策略檢查與 Discord 通知
 
 on:
   schedule:
-    - cron: "30 0 * * *" # 每天 UTC 00:30 執行，台灣時間 08:30
+    - cron: "30 21 * * *" # 每天 UTC 00:30 執行，台灣時間 08:30
   workflow_dispatch:
 
 jobs:
